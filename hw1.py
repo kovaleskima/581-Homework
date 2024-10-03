@@ -29,12 +29,12 @@ x = np.array([-1.6])
 iterations_1 = 1
 
 for i in range(1000):
-    if abs(f(x[i]))<1e-6: #if our last guess was good enough, break the loop
+    fc = f(x[i])
+    x_new = x[i] - f(x[i])/f_prime(x[i])
+    x = np.append(x, x_new)
+    if abs(fc)<1e-6: #if our last guess was good enough, break the loop
         break
-    else: #otherwise, compute a new x using newton raphson method
-        x = np.append(
-            x, x[i] - f(x[i])/f_prime(x[i])
-        )
+
 
 iterations_1 += i
 A1 = x
@@ -72,10 +72,10 @@ for j in range(1000):
 A2 = x_result
 A3 = [iterations_1, iterations_2]
 
-A = np.array([1,2],[-1,1])
-B = np.array([2,0],[0,2])
-C = np.array([2,0,-3],[0,0,-1])
-D = np.array([1,2],[2,3],[-1,0])
+A = np.array([[1,2],[-1,1]])
+B = np.array([[2,0],[0,2]])
+C = np.array([[2,0,-3],[0,0,-1]])
+D = np.array([[1,2],[2,3],[-1,0]])
 x = np.array([1,0])
 y = np.array([0,1])
 z = np.array([1,2,-1])
