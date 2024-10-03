@@ -26,6 +26,7 @@ def f_prime(x):
     return np.sin(3*x) + 3*x*np.cos(3*x) - np.exp(x)
 
 x = np.array([-1.6])
+iterations_1 = 1
 
 for i in range(1000):
     if abs(f(x[i]))<1e-6: #if our last guess was good enough, break the loop
@@ -35,7 +36,10 @@ for i in range(1000):
             x, x[i] - f(x[i])/f_prime(x[i])
         )
 
-print(i) #what iteration were we on?
+iterations_1 += i
+A1 = x
+
+print(iterations_1) #what iteration were we on?
 print(x[i]) #see what we got for x
 print(f(x[i])) #sanity check that f(x) is sufficiently close to 0
 
@@ -46,17 +50,42 @@ print(f(x[i])) #sanity check that f(x) is sufficiently close to 0
 # acceptable tolerance: 10^-6
 xl = -0.7
 xr = -0.4
+x_result = []
+iterations_2 = 1
 
 for j in range(1000):
     xc = (xr+xl)/2
+    x_result.append(xc)
     if f(xc) > 0:
         xl = xc
     else:
         xr = xc
     
     if abs(f(xc)) < 1e-6:
-        print(j) #iteration count
+        iterations_2 += j #iteration count
+        print(iterations_2)
         print(xc) #see what we got for x
         print(f(xc)) #sanity check that f(xc) is sufficiently close to 0
 
         break
+
+A2 = x_result
+A3 = [iterations_1, iterations_2]
+
+A = np.array([1,2],[-1,1])
+B = np.array([2,0],[0,2])
+C = np.array([2,0,-3],[0,0,-1])
+D = np.array([1,2],[2,3],[-1,0])
+x = np.array([1,0])
+y = np.array([0,1])
+z = np.array([1,2,-1])
+
+A4 = A+B
+A5 = 3*x-4*y
+A6 = A@x
+A7 = B@(x-y)
+A8 = D@x
+A9 = (D@y) + z
+A10 = A@B
+A11 = B@C
+A12 = C@D
