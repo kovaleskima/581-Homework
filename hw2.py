@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 
-epsilon = 0;
+epsilon = 0.1;
 
 # Define the ODE system as a first-order system
 # y1 = y, y2 = y'
@@ -40,9 +40,9 @@ def adjust(sol, beta, guess):
         if abs(sol.y[0,-1]-beta) == 0:
             return sol  # Exact solution found
         elif sol.y[0,-1]-beta > 0:
-            guess += dguess  # derivative is too small, walk up
+            guess -= dguess  # derivative is too small, walk up
         else:
-            guess -= dguess  # derivative is too large, walk down
+            guess += dguess  # derivative is too large, walk down
 
         sol, beta = solve_ivp_guess(guess)
         dguess /= 2; #half the change in our guess
