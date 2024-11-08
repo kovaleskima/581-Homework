@@ -103,8 +103,8 @@ plt.show()
 
 gamma_array = [-0.05, 0.05]
 tol = 1e-4
-yp = [-2, 2]
-x = np.linspace(yp[0], yp[1], 41, endpoint=True)
+dx = 0.1
+x = np.arange(-2, 2+dx, dx)
 pEig = []
 pFunc = []
 nEig = []
@@ -116,15 +116,14 @@ A6, A8 = np.zeros(5), np.zeros(5)
 
 def system(x, y, epsilon, gamma):
     dy1dx = y[1]
-    dy2dx = gamma * np.abs(y[0]) ** 2 + (x ** 2 - epsilon) * y[0]
+    dy2dx = (gamma * np.abs(y[0]) ** 2 + x ** 2 - epsilon) * y[0]
     return [dy1dx, dy2dx]
 
 # Main loop over gamma values
 for g, gamma in enumerate(gamma_array):
     starting_epsilon = 0.1
-    starting_A = 1e-6
+    A = 1e-6
     for modes in range(1,3): 
-        A = starting_A
         dA = 0.01
         for i in range(100):  # Convergence loop for A
             epsilon = starting_epsilon
@@ -133,11 +132,10 @@ for g, gamma in enumerate(gamma_array):
                 y0 = [A, A*np.sqrt(4 - epsilon)]
                     
                 # Solve the differential equation with solve_ivp
-                sol = solve_ivp(system, [x[0], x[-1]], y0, args=(epsilon, gamma), atol=1e-4, rtol=1e-4, dense_output=True)
-                y = sol.sol(x)
+                sol = solve_ivp(system, [x[0], x[-1]], y0, args=(epsilon, gamma), t_eval = x)
 
                 # Check convergence on boundary condition
-                residual = y[1, -1] + np.sqrt(4 - epsilon) * y[0, -1]
+                residual = sol.y[1, -1] + np.sqrt(4 - epsilon) * sol.y[0, -1]
                 if abs(residual) < tol:
                     break
                 # Adjust epsilon based on residual
@@ -147,7 +145,7 @@ for g, gamma in enumerate(gamma_array):
                     epsilon -= depsilon
                     depsilon/= 2
                     
-            area = np.trapz(y[0, :] ** 2, x)
+            area = np.trapz(sol.y[0, :]**2, sol.t)
             if np.abs(area-1) < tol:
                 break
             if area < 1:
@@ -157,15 +155,13 @@ for g, gamma in enumerate(gamma_array):
                 dA/=2
 
         starting_epsilon = epsilon + 0.2  # Update starting epsilon for next mode
-
         if gamma > 0:
             pEig.append(epsilon)
-            pFunc.append(np.abs(y[0,:]))    
+            pFunc.append(np.abs(sol.y[0]))    
         else:
             nEig.append(epsilon)
-            nFunc.append(np.abs(y[0,:]))
+            nFunc.append(np.abs(sol.y[0]))
             
-
 A5 = np.array(pFunc).T
 A6 = np.array(pEig)
 print(A6)
